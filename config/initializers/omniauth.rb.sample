@@ -1,0 +1,5 @@
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :facebook, 'YOUR_FACEBOOK_APP_ID', 'APP_SECRET',
+           :scope => 'email,user_birthday,publish_stream'
+# :scope specification =>
+end

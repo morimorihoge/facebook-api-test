@@ -1,0 +1,61 @@
+<h1>page/index</h1>
+<p>ほげほげ</p>
+
+<%= link_to 'facebook login(笑)', '/auth/facebook' %>
+
+<% if session[:fb_token].present? %>
+  <% begin %>
+    <p>
+      Facebook token = <%= session[:fb_token] %>
+    </p>
+    <hr/>
+    <%
+       @graph = Koala::Facebook::API.new(session[:fb_token])
+       profile = @graph.get_object("me")
+       logger.error profile
+       #@graph.put_connections("me", "feed", :message => "こあらgemによるFB Postのてすとなう")
+
+    %>
+    <p>
+      もりもり Profile
+    <table>
+      <tr>
+        <th>
+          ID
+        </th>
+        <td>
+          <%= profile['id'] %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Facebook name
+        </th>
+        <td>
+          <%= profile['name'] %>
+        </td>
+      </tr>
+      <tr>
+        <th>Facebook Link</th>
+        <td><%= link_to profile['link'], profile['link'] %></td>
+      </tr>
+    </table>
+    </p>
+    <%
+       feed = @graph.get_connections("me", "feed")
+    %>
+    <% feed.each do |f| %>
+      <p>
+        id: <%= f['id'] %><br />
+        from: <%= f['from']['name'] %><br />
+        message: <%= f['message'] %>
+      </p>
+    <% end %>
+  <% rescue => e %>
+    <p>
+      Some error occured: <%= e.inspect %>
+    </p>
+  <% end %>
+<% end %>
+
+
